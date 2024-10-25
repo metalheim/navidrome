@@ -30,6 +30,8 @@ types:
   .wvp: audio/x-wavpack 
   .tak: audio/tak 
   .mka: audio/x-matroska 
+  .aa3: audio/ATRAC3 
+  .oma: audio/ATRAC3 
 
 # Image
   .gif: image/gif
