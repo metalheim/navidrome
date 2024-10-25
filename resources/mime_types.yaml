@@ -32,6 +32,7 @@ types:
   .mka: audio/x-matroska 
   .aa3: audio/ATRAC3 
   .oma: audio/ATRAC3 
+  .ra: audio/x-pn-realaudio 
 
 # Image
   .gif: image/gif
