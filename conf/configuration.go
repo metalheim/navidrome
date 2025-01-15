@@ -42,6 +42,7 @@ type configOptions struct {
 	EnableTranscodingConfig         bool
 	EnableDownloads                 bool
 	EnableExternalServices          bool
+	EnableInsightsCollector         bool
 	EnableMediaFileCoverArt         bool
 	TranscodingCacheSize            string
 	ImageCacheSize                  string
@@ -112,6 +113,8 @@ type configOptions struct {
 	DevArtworkThrottleBacklogTimeout time.Duration
 	DevArtistInfoTimeToLive          time.Duration
 	DevAlbumInfoTimeToLive           time.Duration
+	DevInsightsInitialDelay          time.Duration
+	DevEnablePlayerInsights          bool
 }
 
 type scannerOptions struct {
@@ -144,6 +147,7 @@ type secureOptions struct {
 type prometheusOptions struct {
 	Enabled     bool
 	MetricsPath string
+	Password    string
 }
 
 type AudioDeviceDefinition []string
@@ -295,6 +299,7 @@ func parseIniFileConfiguration() {
 
 func disableExternalServices() {
 	log.Info("All external integrations are DISABLED!")
+	Server.EnableInsightsCollector = false
 	Server.LastFM.Enabled = false
 	Server.Spotify.ID = ""
 	Server.ListenBrainz.Enabled = false
@@ -412,6 +417,7 @@ func init() {
 	viper.SetDefault("enablereplaygain", true)
 	viper.SetDefault("enablecoveranimation", true)
 	viper.SetDefault("gatrackingid", "")
+	viper.SetDefault("enableinsightscollector", true)
 	viper.SetDefault("enablelogredacting", true)
 	viper.SetDefault("authrequestlimit", 5)
 	viper.SetDefault("authwindowlength", 20*time.Second)
@@ -421,7 +427,8 @@ func init() {
 	viper.SetDefault("reverseproxywhitelist", "")
 
 	viper.SetDefault("prometheus.enabled", false)
-	viper.SetDefault("prometheus.metricspath", "/metrics")
+	viper.SetDefault("prometheus.metricspath", consts.PrometheusDefaultPath)
+	viper.SetDefault("prometheus.password", "")
 
 	viper.SetDefault("jukebox.enabled", false)
 	viper.SetDefault("jukebox.devices", []AudioDeviceDefinition{})
@@ -467,6 +474,8 @@ func init() {
 	viper.SetDefault("devartworkthrottlebacklogtimeout", consts.RequestThrottleBacklogTimeout)
 	viper.SetDefault("devartistinfotimetolive", consts.ArtistInfoTimeToLive)
 	viper.SetDefault("devalbuminfotimetolive", consts.AlbumInfoTimeToLive)
+	viper.SetDefault("devinsightsinitialdelay", consts.InsightsInitialDelay)
+	viper.SetDefault("devenableplayerinsights", true)
 }
 
 func InitConfig(cfgFile string) {

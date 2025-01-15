@@ -11,13 +11,11 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/navidrome/navidrome/conf"
 	"github.com/navidrome/navidrome/consts"
-	"github.com/navidrome/navidrome/core"
 	"github.com/navidrome/navidrome/db"
 	"github.com/navidrome/navidrome/log"
 	"github.com/navidrome/navidrome/resources"
 	"github.com/navidrome/navidrome/scheduler"
 	"github.com/navidrome/navidrome/server/backgrounds"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"
@@ -80,6 +78,7 @@ func runNavidrome(ctx context.Context) {
 	g.Go(startPlaybackServer(ctx))
 	g.Go(schedulePeriodicScan(ctx))
 	g.Go(schedulePeriodicBackup(ctx))
+	g.Go(startInsightsCollector(ctx))
 
 	if err := g.Wait(); err != nil {
 		log.Error("Fatal error in Navidrome. Aborting", err)
@@ -110,9 +109,10 @@ func startServer(ctx context.Context) func() error {
 			a.MountRouter("ListenBrainz Auth", consts.URLPathNativeAPI+"/listenbrainz", CreateListenBrainzRouter())
 		}
 		if conf.Server.Prometheus.Enabled {
-			// blocking call because takes <1ms but useful if fails
-			core.WriteInitialMetrics()
-			a.MountRouter("Prometheus metrics", conf.Server.Prometheus.MetricsPath, promhttp.Handler())
+			p := CreatePrometheus()
+			// blocking call because takes <100ms but useful if fails
+			p.WriteInitialMetrics(ctx)
+			a.MountRouter("Prometheus metrics", conf.Server.Prometheus.MetricsPath, p.GetHandler())
 		}
 		if conf.Server.DevEnableProfiler {
 			a.MountRouter("Profiling", "/debug", middleware.Profiler())
@@ -162,13 +162,12 @@ func schedulePeriodicBackup(ctx context.Context) func() error {
 			return nil
 		}
 
-		database := db.Db()
 		schedulerInstance := scheduler.GetInstance()
 
 		log.Info("Scheduling periodic backup", "schedule", schedule)
 		err := schedulerInstance.Add(schedule, func() {
 			start := time.Now()
-			path, err := database.Backup(ctx)
+			path, err := db.Backup(ctx)
 			elapsed := time.Since(start)
 			if err != nil {
 				log.Error(ctx, "Error backing up database", "elapsed", elapsed, err)
@@ -176,7 +175,7 @@ func schedulePeriodicBackup(ctx context.Context) func() error {
 			}
 			log.Info(ctx, "Backup complete", "elapsed", elapsed, "path", path)
 
-			count, err := database.Prune(ctx)
+			count, err := db.Prune(ctx)
 			if err != nil {
 				log.Error(ctx, "Error pruning database", "error", err)
 			} else if count > 0 {
@@ -196,6 +195,25 @@ func startScheduler(ctx context.Context) func() error {
 		log.Info(ctx, "Starting scheduler")
 		schedulerInstance := scheduler.GetInstance()
 		schedulerInstance.Run(ctx)
+		return nil
+	}
+}
+
+// startInsightsCollector starts the Navidrome Insight Collector, if configured.
+func startInsightsCollector(ctx context.Context) func() error {
+	return func() error {
+		if !conf.Server.EnableInsightsCollector {
+			log.Info(ctx, "Insight Collector is DISABLED")
+			return nil
+		}
+		log.Info(ctx, "Starting Insight Collector")
+		select {
+		case <-time.After(conf.Server.DevInsightsInitialDelay):
+		case <-ctx.Done():
+			return nil
+		}
+		ic := CreateInsights()
+		ic.Run(ctx)
 		return nil
 	}
 }

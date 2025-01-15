@@ -23,10 +23,10 @@ func NewShareRepository(ctx context.Context, db dbx.Builder) model.ShareReposito
 	r := &shareRepository{}
 	r.ctx = ctx
 	r.db = db
-	r.registerModel(&model.Share{}, map[string]filterFunc{})
-	r.sortMappings = map[string]string{
+	r.registerModel(&model.Share{}, nil)
+	r.setSortMappings(map[string]string{
 		"username": "username",
-	}
+	})
 	return r
 }
 
@@ -46,6 +46,7 @@ func (r *shareRepository) selectShare(options ...model.QueryOptions) SelectBuild
 func (r *shareRepository) Exists(id string) (bool, error) {
 	return r.exists(Select().Where(Eq{"id": id}))
 }
+
 func (r *shareRepository) Get(id string) (*model.Share, error) {
 	sel := r.selectShare().Where(Eq{"share.id": id})
 	var res model.Share

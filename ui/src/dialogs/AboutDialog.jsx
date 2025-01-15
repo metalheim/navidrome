@@ -11,10 +11,11 @@ import TableCell from '@material-ui/core/TableCell'
 import Paper from '@material-ui/core/Paper'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import inflection from 'inflection'
-import { useTranslate } from 'react-admin'
+import { useGetOne, usePermissions, useTranslate } from 'react-admin'
 import config from '../config'
 import { DialogTitle } from './DialogTitle'
 import { DialogContent } from './DialogContent'
+import { INSIGHTS_DOC_URL } from '../consts.js'
 
 const links = {
   homepage: 'navidrome.org',
@@ -51,6 +52,19 @@ const LinkToVersion = ({ version }) => {
 
 const AboutDialog = ({ open, onClose }) => {
   const translate = useTranslate()
+  const { permissions } = usePermissions()
+  const { data, loading } = useGetOne('insights', 'insights_status')
+
+  const lastRun = !loading && data?.lastRun
+  let insightsStatus = 'N/A'
+  if (lastRun === 'disabled') {
+    insightsStatus = translate('about.links.insights.disabled')
+  } else if (lastRun && lastRun?.startsWith('1969-12-31')) {
+    insightsStatus = translate('about.links.insights.waiting')
+  } else if (lastRun) {
+    insightsStatus = lastRun
+  }
+
   return (
     <Dialog onClose={onClose} aria-labelledby="about-dialog-title" open={open}>
       <DialogTitle id="about-dialog-title" onClose={onClose}>
@@ -87,6 +101,16 @@ const AboutDialog = ({ open, onClose }) => {
                   </TableRow>
                 )
               })}
+              {permissions === 'admin' ? (
+                <TableRow>
+                  <TableCell align="right" component="th" scope="row">
+                    {translate(`about.links.lastInsightsCollection`)}:
+                  </TableCell>
+                  <TableCell align="left">
+                    <Link href={INSIGHTS_DOC_URL}>{insightsStatus}</Link>
+                  </TableCell>
+                </TableRow>
+              ) : null}
               <TableRow>
                 <TableCell align="right" component="th" scope="row">
                   <Link

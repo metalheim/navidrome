@@ -3,6 +3,7 @@ package consts
 import (
 	"crypto/md5"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -11,7 +12,7 @@ import (
 const (
 	AppName = "navidrome"
 
-	DefaultDbPath       = "navidrome.db?cache=shared&_cache_size=1000000000&_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL&_foreign_keys=on&_txlock=immediate"
+	DefaultDbPath       = "navidrome.db?cache=shared&_busy_timeout=15000&_journal_mode=WAL&_foreign_keys=on"
 	InitialSetupFlagKey = "InitialSetup"
 
 	UIAuthorizationHeader  = "X-ND-Authorization"
@@ -57,7 +58,7 @@ const (
 	SkipScanFile = ".ndignore"
 
 	PlaceholderArtistArt = "artist-placeholder.webp"
-	PlaceholderAlbumArt  = "placeholder.png"
+	PlaceholderAlbumArt  = "album-placeholder.webp"
 	PlaceholderAvatar    = "logo-192x192.png"
 	UICoverArtSize       = 300
 	DefaultUIVolume      = 100
@@ -67,6 +68,12 @@ const (
 	DefaultScannerExtractor = "taglib"
 
 	Zwsp = string('\u200b')
+)
+
+// Prometheus options
+const (
+	PrometheusDefaultPath = "/metrics"
+	PrometheusAuthUser    = "navidrome"
 )
 
 // Cache options
@@ -84,6 +91,13 @@ const (
 const (
 	AlbumPlayCountModeAbsolute   = "absolute"
 	AlbumPlayCountModeNormalized = "normalized"
+)
+
+const (
+	InsightsIDKey          = "InsightsID"
+	InsightsEndpoint       = "https://insights.navidrome.org/collect"
+	InsightsUpdateInterval = 24 * time.Hour
+	InsightsInitialDelay   = 30 * time.Minute
 )
 
 var (
@@ -127,3 +141,11 @@ var (
 
 	ServerStart = time.Now()
 )
+
+var InContainer = func() bool {
+	// Check if the /.nddockerenv file exists
+	if _, err := os.Stat("/.nddockerenv"); err == nil {
+		return true
+	}
+	return false
+}()

@@ -25,19 +25,19 @@ setup: check_env download-deps setup-git ##@1_Run_First Install dependencies and
 .PHONY: setup
 
 dev: check_env   ##@Development Start Navidrome in development mode, with hot-reload for both frontend and backend
-	npx foreman -j Procfile.dev -p 4533 start
+	ND_ENABLEINSIGHTSCOLLECTOR="false" npx foreman -j Procfile.dev -p 4533 start
 .PHONY: dev
 
 server: check_go_env buildjs ##@Development Start the backend in development mode
-	@go run github.com/cespare/reflex@latest -d none -c reflex.conf
+	@ND_ENABLEINSIGHTSCOLLECTOR="false" go run github.com/cespare/reflex@latest -d none -c reflex.conf
 .PHONY: server
 
 watch: ##@Development Start Go tests in watch mode (re-run when code changes)
-	go run github.com/onsi/ginkgo/v2/ginkgo@latest watch -notify ./...
+	go run github.com/onsi/ginkgo/v2/ginkgo@latest watch -tags netgo -notify ./...
 .PHONY: watch
 
 test: ##@Development Run Go tests
-	go test -race -shuffle=on ./...
+	go test -tags netgo -race -shuffle=on ./...
 .PHONY: test
 
 testall: test ##@Development Run Go and JS tests
@@ -60,7 +60,7 @@ format: ##@Development Format code
 .PHONY: format
 
 wire: check_go_env ##@Development Update Dependency Injection
-	go run github.com/google/wire/cmd/wire@latest ./...
+	go run github.com/google/wire/cmd/wire@latest gen -tags=netgo ./...
 .PHONY: wire
 
 snapshots: ##@Development Update (GoLang) Snapshot tests
@@ -143,6 +143,11 @@ docker-msi: ##@Cross_Compilation Build MSI installer for Windows
 		navidrome-msi-builder sh -c "release/wix/build_msi.sh /workspace 386 && release/wix/build_msi.sh /workspace amd64"
 	@du -h binaries/msi/*.msi
 .PHONY: docker-msi
+
+package: docker-build ##@Cross_Compilation Create binaries and packages for ALL supported platforms
+	@if [ -z `which goreleaser` ]; then echo "Please install goreleaser first: https://goreleaser.com/install/"; exit 1; fi
+	goreleaser release -f release/goreleaser.yml --clean --skip=publish --snapshot
+.PHONY: package
 
 get-music: ##@Development Download some free music from Navidrome's demo instance
 	mkdir -p music

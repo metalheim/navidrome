@@ -78,9 +78,6 @@ func buildAuthPayload(user *model.User) map[string]interface{} {
 	if conf.Server.EnableGravatar && user.Email != "" {
 		payload["avatar"] = gravatar.Url(user.Email, 50)
 	}
-	if conf.Server.LastFM.Enabled {
-		payload["lastFMApiKey"] = conf.Server.LastFM.ApiKey
-	}
 
 	bytes := make([]byte, 3)
 	_, err := rand.Read(bytes)
@@ -174,17 +171,17 @@ func validateLogin(userRepo model.UserRepository, userName, password string) (*m
 	return u, nil
 }
 
-// This method maps the custom authorization header to the default 'Authorization', used by the jwtauth library
-func authHeaderMapper(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		bearer := r.Header.Get(consts.UIAuthorizationHeader)
-		r.Header.Set("Authorization", bearer)
-		next.ServeHTTP(w, r)
-	})
+func jwtVerifier(next http.Handler) http.Handler {
+	return jwtauth.Verify(auth.TokenAuth, tokenFromHeader, jwtauth.TokenFromCookie, jwtauth.TokenFromQuery)(next)
 }
 
-func jwtVerifier(next http.Handler) http.Handler {
-	return jwtauth.Verify(auth.TokenAuth, jwtauth.TokenFromHeader, jwtauth.TokenFromCookie, jwtauth.TokenFromQuery)(next)
+func tokenFromHeader(r *http.Request) string {
+	// Get token from authorization header.
+	bearer := r.Header.Get(consts.UIAuthorizationHeader)
+	if len(bearer) > 7 && strings.ToUpper(bearer[0:6]) == "BEARER" {
+		return bearer[7:]
+	}
+	return ""
 }
 
 func UsernameFromToken(r *http.Request) string {
