@@ -5,9 +5,15 @@ export default {
   themeName: 'Amusic',
   palette: {
     primary: {
-      main: '#90caf9',
+      main: '#FF4E6B',
     },
-    secondary: red,
+    secondary: {
+      main: '#FF0436',
+    },
+    background: {
+      default: '#1f1f1f',
+      paper: '#222222',
+    },
     type: 'dark',
   },
   typography: {
@@ -21,19 +27,59 @@ export default {
     },
   },
   overrides: {
+    MuiButton: {
+      root: {
+        background: '#222222',
+        color: '#fff',
+        border: '1px solid transparent',
+        borderRadius: 500,
+        '&:hover': {
+          background: '#FF4E6B !important',
+        },
+      },
+      textSecondary: {
+        border: '1px solid #FF4E6B',
+        background: '#000',
+      },
+      label: {
+        color: '#FF4E6B',
+        paddingRight: '1rem',
+        paddingLeft: '0.7rem',
+      },
+    },
+    MuiMenuItem: {
+      root: {
+        fontSize: '0.875rem',
+        lineHeight: '1rem',
+        borderRadius: '7px',
+        marginRight: '16px'
+      }
+    },
+    MuiIconButton{
+      root: {
+        backgroundColor: 'rgba(0,0,0 / 20%)',
+        '&:hover': {
+          backgroundColor: '#FF4E6B !important'
+        }
+      }
+    },
+    MuiMenuItemIcon: {
+      root: {
+        minWidth: '36px',
+      }
+    },
     MuiFormGroup: {
       root: {
         color: 'white',
-      },
+      }
     },
     MuiListItemIcon: {
       root: {
         color: '#FF4E6B',
-      },
+      }
     },
     NDAlbumDetails: {
       root: {
-        background: 'linear-gradient(#1d1d1d, transparent)',
         borderRadius: 0,
         boxShadow: 'none',
       },
@@ -55,6 +101,47 @@ export default {
       },
     },
     
+    NDArtistShow: {
+      actions: {
+        padding: '2rem 0',
+        alignItems: 'center',
+        overflow: 'visible',
+        '@global': {
+          button: {
+            border: '1px solid transparent',
+            backgroundColor: '#222222',
+            color: '#FF4E6B',
+            margin: '0 0.5rem'
+          },
+          // Hide shuffle button label (first button)
+          'button:first-child>span:first-child>span': {
+            display: 'none',
+          },
+          // Style shuffle button (first button)
+          'button:first-child': {
+            transform: 'scale(1.5)',
+            margin: '1rem',
+            minWidth: 0,
+            padding: 5,
+            transition: 'transform .3s ease',
+            background: '#FF4E6B',
+            color: '#fff',
+            borderRadius: 500,
+            border: 0
+          },
+          'button:first-child>span:first-child': {
+            padding: 0,
+          },
+          'button>span:first-child>span, button:not(:first-child)>span:first-child>svg':
+            {
+              color: '#b3b3b3',
+            },
+        },
+      },
+      actionsContainer: {
+        overflow: 'visible',
+      },
+    },
     NDAlbumGridView: {
       albumName: {
         marginTop: '0.5rem',
@@ -93,6 +180,22 @@ export default {
       avatar: {},
       button: {
         boxShadow: '3px 3px 5px #000000a3',
+      },
+    },
+    NDAudioPlayer: {
+      audioTitle: {
+        color: '#fff',
+        fontSize: '0.875rem',
+      },
+      songTitle: {
+        fontWeight: 400,
+      },
+      songInfo: {
+        fontSize: '0.675rem',
+        color: '#b3b3b3',
+      },
+      player: {
+        border: '10px solid #FF0436',
       },
     },
     NDMobileArtistDetails: {
