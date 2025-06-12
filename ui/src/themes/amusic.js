@@ -1,4 +1,3 @@
-import red from '@material-ui/core/colors/red'
 import stylesheet from './amusic.css.js'
 
 export default {
@@ -52,31 +51,31 @@ export default {
         fontSize: '0.875rem',
         lineHeight: '1rem',
         borderRadius: '7px',
-        marginRight: '16px'
-      }
+        marginRight: '16px',
+      },
     },
-    MuiIconButton{
+    MuiIconButton: { // <-- Fixed missing colon
       root: {
         backgroundColor: 'rgba(0,0,0 / 20%)',
         '&:hover': {
-          backgroundColor: '#FF4E6B !important'
-        }
-      }
+          backgroundColor: '#FF4E6B !important',
+        },
+      },
     },
     MuiMenuItemIcon: {
       root: {
         minWidth: '36px',
-      }
+      },
     },
     MuiFormGroup: {
       root: {
         color: 'white',
-      }
+      },
     },
     MuiListItemIcon: {
       root: {
         color: '#FF4E6B',
-      }
+      },
     },
     NDAlbumDetails: {
       root: {
@@ -88,7 +87,7 @@ export default {
         paddingTop: '1.5rem',
       },
       recordName: {
-        fontSize: 'calc(1rem + 1.5vw);',
+        fontSize: 'calc(1rem + 1.5vw)',
         fontWeight: 700,
       },
       recordArtist: {
@@ -100,7 +99,6 @@ export default {
         color: 'rgba(255,255,255, 0.8)',
       },
     },
-    
     NDArtistShow: {
       actions: {
         padding: '2rem 0',
@@ -111,7 +109,7 @@ export default {
             border: '1px solid transparent',
             backgroundColor: '#222222',
             color: '#FF4E6B',
-            margin: '0 0.5rem'
+            margin: '0 0.5rem',
           },
           // Hide shuffle button label (first button)
           'button:first-child>span:first-child>span': {
@@ -127,15 +125,14 @@ export default {
             background: '#FF4E6B',
             color: '#fff',
             borderRadius: 500,
-            border: 0
+            border: 0,
           },
           'button:first-child>span:first-child': {
             padding: 0,
           },
-          'button>span:first-child>span, button:not(:first-child)>span:first-child>svg':
-            {
-              color: '#b3b3b3',
-            },
+          'button>span:first-child>span, button:not(:first-child)>span:first-child>svg': {
+            color: '#b3b3b3',
+          },
         },
       },
       actionsContainer: {
