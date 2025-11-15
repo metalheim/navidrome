@@ -49,7 +49,7 @@ const AlbumExternalLinks = (props) => {
 
   record.website &&
     addLink(
-      record.website,
+      record.tags.website,
       'message.openIn.website',
       <FaGlobe className="website-icon" />,
     )
