@@ -51,7 +51,7 @@ const AlbumExternalLinks = (props) => {
     addLink(
       record.website,
       'message.openIn.website',
-      <FaGlobe className="website-icon" />
+      <FaGlobe className="website-icon" />,
     )
   
   return <div className={className}>{intersperse(links, ' ')}</div>
