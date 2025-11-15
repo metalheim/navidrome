@@ -503,7 +503,8 @@
     "listenBrainzUnlinkFailure": "ListenBrainz could not be unlinked",
     "openIn": {
       "lastfm": "Open in Last.fm",
-      "musicbrainz": "Open in MusicBrainz"
+      "musicbrainz": "Open in MusicBrainz",
+      "website": "Open Website"
     },
     "lastfmLink": "Read More...",
     "shareOriginalFormat": "Share in original format",
