@@ -46,14 +46,14 @@ const AlbumExternalLinks = (props) => {
       'message.openIn.musicbrainz',
       <MusicBrainz className="musicbrainz-icon" />,
     )
-  
+
   record.website &&
     addLink(
       record.website,
       'message.openIn.website',
       <FaGlobe className="website-icon" />,
     )
-  
+
   return <div className={className}>{intersperse(links, ' ')}</div>
 }
 
