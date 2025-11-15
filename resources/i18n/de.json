@@ -486,7 +486,8 @@
     "lastfmUnlinkFailure": "Last.fm Verbindung konnte nicht entfernt werden",
     "openIn": {
       "lastfm": "Auf Last.fm anzeigen",
-      "musicbrainz": "Auf MusicBrainz anzeigen"
+      "musicbrainz": "Auf MusicBrainz anzeigen",
+      "website": "Website anzeigen"
     },
     "lastfmLink": "Mehr lesen",
     "listenBrainzLinkSuccess": "Last.fm Verbindung hergestellt und und scrobbling aktiviert als user: %{user}",

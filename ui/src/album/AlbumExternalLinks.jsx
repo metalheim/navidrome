@@ -3,6 +3,7 @@ import { useRecordContext, useTranslate } from 'react-admin'
 import { IconButton, Tooltip, Link } from '@material-ui/core'
 import { ImLastfm2 } from 'react-icons/im'
 import MusicBrainz from '../icons/MusicBrainz'
+import { FaGlobe } from 'react-icons/fa'
 import { intersperse } from '../utils'
 import config from '../config'
 
@@ -45,7 +46,14 @@ const AlbumExternalLinks = (props) => {
       'message.openIn.musicbrainz',
       <MusicBrainz className="musicbrainz-icon" />,
     )
-
+  
+  record.website &&
+    addLink(
+      record.website,
+      'message.openIn.website',
+      <FaGlobe className="website-icon" />
+    )
+  
   return <div className={className}>{intersperse(links, ' ')}</div>
 }
 
