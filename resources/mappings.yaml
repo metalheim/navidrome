@@ -253,5 +253,6 @@ additional:
     aliases: [ tit3, subtitle, ----:com.apple.itunes:subtitle, wm/subtitle ]
   website:
     aliases: [ woar, website, weblink, wm/authorurl ]
+    album: true
   work:
     aliases: [ txxx:work, tit1, work, ©wrk, wm/work ]
