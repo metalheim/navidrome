@@ -47,9 +47,9 @@ const AlbumExternalLinks = (props) => {
       <MusicBrainz className="musicbrainz-icon" />,
     )
 
-  record.website &&
+  record.tags.website &&
     addLink(
-      record.tags.website,
+      record.tags.website[0],
       'message.openIn.website',
       <FaGlobe className="website-icon" />,
     )
