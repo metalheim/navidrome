@@ -15,6 +15,7 @@ import (
 	"github.com/tetratelabs/wazero"
 	"github.com/tetratelabs/wazero/api"
 	"github.com/tetratelabs/wazero/experimental"
+	"github.com/wasilibs/wazero-helpers/allocator"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -329,6 +330,8 @@ func (m *Manager) loadPluginWithConfig(p *model.Plugin) error {
 
 	// Enable experimental threads if requested in manifest
 	if pkg.Manifest.HasExperimentalThreads() {
+		ctx := experimental.WithMemoryAllocator(m.ctx, allocator.NewNonMoving())
+	
 		runtimeConfig = runtimeConfig.WithCoreFeatures(api.CoreFeaturesV2 | experimental.CoreFeaturesThreads)
 		log.Debug(m.ctx, "Enabling experimental threads support", "plugin", p.ID)
 	}
