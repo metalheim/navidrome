@@ -179,7 +179,9 @@ func (r *libraryRepository) ScanEnd(id int) error {
 	// https://www.sqlite.org/pragma.html#pragma_optimize
 	// Use mask 0x10000 to check table sizes without running ANALYZE
 	// Running ANALYZE can cause query planner issues with expression-based collation indexes
-	_, err = r.executeSQL(Expr("PRAGMA optimize=0x10000;"))
+	if conf.Server.DevOptimizeDB {
+		_, err = r.executeSQL(Expr("PRAGMA optimize=0x10000;"))
+	}
 	return err
 }
 
@@ -264,6 +266,10 @@ func (r *libraryRepository) Delete(id int) error {
 	defer libLock.Unlock()
 	delete(libCache, id)
 
+	// Clean up orphaned plugin references for the deleted library
+	if err := cleanupPluginLibraryReferences(r.db, id); err != nil {
+		log.Error(r.ctx, "Failed to cleanup plugin library references", "libraryID", id, err)
+	}
 	return nil
 }
 

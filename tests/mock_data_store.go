@@ -25,7 +25,9 @@ type MockDataStore struct {
 	MockedTranscoding    model.TranscodingRepository
 	MockedUserProps      model.UserPropsRepository
 	MockedScrobbleBuffer model.ScrobbleBufferRepository
+	MockedScrobble       model.ScrobbleRepository
 	MockedRadio          model.RadioRepository
+	MockedPlugin         model.PluginRepository
 	scrobbleBufferMu     sync.Mutex
 	repoMu               sync.Mutex
 
@@ -208,10 +210,21 @@ func (db *MockDataStore) ScrobbleBuffer(ctx context.Context) model.ScrobbleBuffe
 		if db.RealDS != nil {
 			db.MockedScrobbleBuffer = db.RealDS.ScrobbleBuffer(ctx)
 		} else {
-			db.MockedScrobbleBuffer = CreateMockedScrobbleBufferRepo()
+			db.MockedScrobbleBuffer = &MockedScrobbleBufferRepo{}
 		}
 	}
 	return db.MockedScrobbleBuffer
+}
+
+func (db *MockDataStore) Scrobble(ctx context.Context) model.ScrobbleRepository {
+	if db.MockedScrobble == nil {
+		if db.RealDS != nil {
+			db.MockedScrobble = db.RealDS.Scrobble(ctx)
+		} else {
+			db.MockedScrobble = &MockScrobbleRepo{ctx: ctx}
+		}
+	}
+	return db.MockedScrobble
 }
 
 func (db *MockDataStore) Radio(ctx context.Context) model.RadioRepository {
@@ -223,6 +236,17 @@ func (db *MockDataStore) Radio(ctx context.Context) model.RadioRepository {
 		}
 	}
 	return db.MockedRadio
+}
+
+func (db *MockDataStore) Plugin(ctx context.Context) model.PluginRepository {
+	if db.MockedPlugin == nil {
+		if db.RealDS != nil {
+			db.MockedPlugin = db.RealDS.Plugin(ctx)
+		} else {
+			db.MockedPlugin = CreateMockPluginRepo()
+		}
+	}
+	return db.MockedPlugin
 }
 
 func (db *MockDataStore) WithTx(block func(tx model.DataStore) error, label ...string) error {
@@ -257,6 +281,8 @@ func (db *MockDataStore) Resource(ctx context.Context, m any) model.ResourceRepo
 		return db.Transcoding(ctx).(model.ResourceRepository)
 	case model.Player, *model.Player:
 		return db.Player(ctx).(model.ResourceRepository)
+	case model.Plugin, *model.Plugin:
+		return db.Plugin(ctx).(model.ResourceRepository)
 	default:
 		return struct{ model.ResourceRepository }{}
 	}

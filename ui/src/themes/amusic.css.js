@@ -1,4 +1,10 @@
 const stylesheet = `
+.react-jinke-music-player-main .music-player-panel svg {
+    color: #eee
+}
+.react-jinke-music-player-main .music-player-panel button:disabled svg {
+    opacity: 0.3
+}
 .react-jinke-music-player-main svg:active, .react-jinke-music-player-main svg:hover {
     color: #D60017
 }
@@ -27,7 +33,6 @@ const stylesheet = `
 .react-jinke-music-player-main .audio-item.playing .player-singer {
     color: #ff4e6b !important
 }
-.react-jinke-music-player-main .lyric-btn,
 .react-jinke-music-player-main .lyric-btn-active svg{
     color: #ff4e6b !important
 }
@@ -47,17 +52,15 @@ const stylesheet = `
 .react-jinke-music-player-main .music-player-panel,
 .react-jinke-music-player-mobile,
 .ril__outer{
-    background-color: #1f1f1f;
+    background-color: #1a1a1a;
 	border: 1px solid #fff1;
-}
-.ril__toolbar{
-    background-color: #1d1d1d
 }
 .ril__toolbarItem{
 	font-size: 100%;
 	color: #eee
 }
-.audio-lists-panel{
+.audio-lists-panel,
+.ril__toolbar{
     background-color: #1f1f1f;
 	border: 1px solid #fff1;
 	border-radius: 6px 6px 0 0;
