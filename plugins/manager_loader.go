@@ -329,9 +329,9 @@ func (m *Manager) loadPluginWithConfig(p *model.Plugin) error {
 		WithCloseOnContextDone(true)
 
 	// Enable experimental threads if requested in manifest
+	ctx := m.ctx
 	if pkg.Manifest.HasExperimentalThreads() {
-		ctx := experimental.WithMemoryAllocator(m.ctx, allocator.NewNonMoving())
-	
+		ctx = experimental.WithMemoryAllocator(m.ctx, allocator.NewNonMoving())
 		runtimeConfig = runtimeConfig.WithCoreFeatures(api.CoreFeaturesV2 | experimental.CoreFeaturesThreads)
 		log.Debug(m.ctx, "Enabling experimental threads support", "plugin", p.ID)
 	}
@@ -341,7 +341,7 @@ func (m *Manager) loadPluginWithConfig(p *model.Plugin) error {
 		RuntimeConfig:             runtimeConfig,
 		EnableHttpResponseHeaders: true,
 	}
-	compiled, err := extism.NewCompiledPlugin(m.ctx, pluginManifest, extismConfig, hostFunctions)
+	compiled, err := extism.NewCompiledPlugin(ctx, pluginManifest, extismConfig, hostFunctions)
 	if err != nil {
 		return fmt.Errorf("compiling plugin: %w", err)
 	}
