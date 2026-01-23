@@ -65,6 +65,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/tetratelabs/wazero v1.11.0
 	github.com/unrolled/secure v1.17.0
+	github.com/wasilibs/wazero-helpers v0.0.0-20250123031827-cd30c44769bb
 	github.com/xrash/smetrics v0.0.0-20250705151800-55b8f293f342
 	go.senan.xyz/taglib v0.11.1
 	go.uber.org/goleak v1.3.0
