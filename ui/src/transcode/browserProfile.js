@@ -4,7 +4,7 @@ export const CODEC_PROBES = [
   { codec: 'aac', container: 'mp4', mime: 'audio/mp4; codecs="mp4a.40.2"' },
   { codec: 'opus', container: 'ogg', mime: 'audio/ogg; codecs="opus"' },
   { codec: 'vorbis', container: 'ogg', mime: 'audio/ogg; codecs="vorbis"' },
-  { codec: 'flac', container: 'flac', mime: 'audio/flac; codecs="flac" },
+  { codec: 'flac', container: 'flac', mime: 'audio/flac; codecs="flac"' },
   { codec: 'wav', container: 'wav', mime: 'audio/wav' },
   { codec: 'alac', container: 'mp4', mime: 'audio/mp4; codecs="alac"' },
 ]
