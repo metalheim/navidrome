@@ -7,6 +7,8 @@ import (
 
 	"github.com/navidrome/navidrome/tests"
 	"github.com/navidrome/navidrome/utils"
+	"github.com/navidrome/navidrome/conf"
+	"github.com/navidrome/navidrome/model/metadata"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -249,6 +251,46 @@ var _ = Describe("Extractor", func() {
 					Expect(mds).To(HaveLen(2))
 					Expect(mds).ToNot(HaveKey(accessForbiddenFile[1:]))
 				})
+			})
+		})
+
+		Context("when metadata cannot be read", func() {
+			var invalidFile string
+
+			BeforeEach(func() {
+				invalidFile = utils.TempFileName("invalid-audio-", ".xm")
+
+				Expect(os.WriteFile(invalidFile, []byte("this is not a valid audio file"), 0644)).To(Succeed())
+
+				DeferCleanup(func() {
+					Expect(os.Remove(invalidFile)).To(Succeed())
+				})
+
+				// Use root fs for absolute paths in temp directory
+				e = &extractor{fs: os.DirFS("/")}
+			})
+
+			It("skips the file when ImportOnReadError is disabled", func() {
+				conf.Server.Scanner.ImportOnReadError = false
+
+				// Strip leading slash for DirFS rooted at "/"
+				mds, err := e.Parse(invalidFile[1:])
+				Expect(err).ToNot(HaveOccurred())
+				Expect(mds).ToNot(HaveKey(invalidFile[1:]))
+			})
+
+			It("imports the file with empty metadata when ImportOnReadError is enabled", func() {
+				conf.Server.Scanner.ImportOnReadError = true
+
+				// Strip leading slash for DirFS rooted at "/"
+				mds, err := e.Parse(invalidFile[1:])
+				Expect(err).ToNot(HaveOccurred())
+				Expect(mds).To(HaveKey(invalidFile[1:]))
+
+				m := mds[invalidFile[1:]]
+				Expect(m.Tags).To(BeEmpty())
+				Expect(m.HasPicture).To(BeFalse())
+				Expect(m.AudioProperties).To(Equal(metadata.AudioProperties{}))
 			})
 		})
 
