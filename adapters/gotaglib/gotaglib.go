@@ -38,9 +38,9 @@ func (e extractor) Parse(files ...string) (map[string]metadata.Info, error) {
 		props, err := e.extractMetadata(path)
 		if err != nil {
 			if !conf.Server.Scanner.ImportOnReadError {
-				log.Warn("gotaglib: Error reading metadata from file. Importing without metadata", "filePath", path, err)
 				continue
 			}
+			log.Warn("gotaglib: Error reading metadata from file. Importing without metadata", "filePath", path, err)
 +			f, openErr := e.fs.Open(path)
 +			if openErr != nil {
 +				continue
